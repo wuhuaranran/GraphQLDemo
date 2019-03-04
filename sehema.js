@@ -1,3 +1,4 @@
+// GraphQL 服务端
 const {
     GraphQLSchema,
     GraphQLObjectType,

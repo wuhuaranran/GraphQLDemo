@@ -3,8 +3,9 @@
 node server
 
 ## 浏览器查看
-http://localhost:8000
-http://localhost:8000/graphql
+- http://localhost:8000
+- http://localhost:8000/graphql
+```
 {
   hello(name: "zx")
   person(name: "zx"){
@@ -13,3 +14,5 @@ http://localhost:8000/graphql
     age
   }
 }
+```
+- http://localhost:8000/index
