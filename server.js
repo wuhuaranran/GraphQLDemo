@@ -10,6 +10,7 @@ app.get("/index", function (req, res) {
 });
 
 const schema = require("./sehema");
+
 app.use(
   "/graphql",
   expressGraphql({

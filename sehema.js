@@ -5,11 +5,12 @@ const {
   GraphQLObjectType,
   GraphQLString,
   GraphQLInt,
-  GraphQLBoolean,
+  GraphQLNonNull,
+  GraphQLID,
 } = require("graphql");
 
-const { getCourses } = require("./mysql");
-const { Person, Course } = require("./types");
+const { getCourses, addCourses, deleteCourses } = require("./mysql");
+const { Person, Course, OptResult } = require("./types");
 
 const queryObj = new GraphQLObjectType({
   name: "myFirstQuery",
@@ -23,7 +24,7 @@ const queryObj = new GraphQLObjectType({
         name: {
           // 这里定义参数，包括参数类型和默认值
           type: GraphQLString,
-          defaultValue: "Brian",
+          defaultValue: "GraphQL",
         },
       },
       resolve(parentValue, args, request) {
@@ -53,11 +54,7 @@ const queryObj = new GraphQLObjectType({
       name: "courses list",
       description: "query courses list",
       type: new GraphQLList(Course),
-      args: {
-        id: {
-          type: GraphQLInt,
-        },
-      },
+      args: { id: { type: GraphQLID } },
       async resolve(parentValue, args, request) {
         return await getCourses(args.id);
       },
@@ -65,6 +62,35 @@ const queryObj = new GraphQLObjectType({
   },
 });
 
+const mutationObj = new GraphQLObjectType({
+  name: "Mutation",
+  description: "增删改数据",
+  fields: () => ({
+    createCourse: {
+      type: OptResult,
+      args: {
+        course: { type: new GraphQLNonNull(GraphQLString) },
+        score: { type: new GraphQLNonNull(GraphQLInt) },
+        userId: { type: new GraphQLNonNull(GraphQLInt) },
+      },
+      resolve: async function (source, { course, score, userId }) {
+        return await addCourses({ course, score, userId });
+      },
+    },
+
+    removeCourse: {
+      type: OptResult,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLID) },
+      },
+      resolve: async function (source, { id }) {
+        return await deleteCourses(id);
+      },
+    },
+  }),
+});
+
 module.exports = new GraphQLSchema({
   query: queryObj,
+  mutation: mutationObj,
 });
